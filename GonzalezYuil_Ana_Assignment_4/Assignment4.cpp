@@ -9,16 +9,18 @@ Outputs:
     the puzzle filename, the unsolved puzzle, 
     the solved puzzle if 1+ solutions exist,
     "no solution" if no solutions exist
-Collaborators: N/A
+Collaborators: 
+    "What is meant with "const" at end of function declaration?" 
+    (https://stackoverflow.com/questions/3141087/what-is-meant-with-const-at-end-of-function-declaration)
 Other sources: Gemini
 Author: Ana Gonzalez Yuil
 Creation Date: 10.14.26
 Revision Date: 10.14.26
-Revisions: 
+Revisions: personal comments (indicated by ***)
 */
 
 /**
- * @file SudokuSolver.cpp
+ * @file Assignment4.cpp
  * @brief Object-based Sudoku Solver using Recursive Backtracking (DFS) in C++.
  * 
  * This program reads partially solved Sudoku puzzles from text files where blank spaces 
@@ -49,7 +51,9 @@ public:
      * Initializes a 9x9 grid filled with placeholder underscores ('_').
      */
     SudokuPuzzle() {
-        grid.resize(9, std::vector<char>(9, '_'));
+        grid.resize(9, std::vector<char>(9, '_')); // *** changes size of grid after initialization
+        // *** '9' sets the size of grid to 9. 
+        // *** 'std::vector<char>(9, '_')' initializes every element of grid to be a vector of size 9 with every element set to '_'
     }
 
     /**
@@ -59,14 +63,14 @@ public:
      * @return true If the file was successfully opened and read.
      * @return false If the file could not be opened.
      */
-    bool loadFromFile(const std::string& filename) {
+    bool loadFromFile(const std::string& filename) {// *** takes input variable by reference (does not create a copy)
         std::ifstream file(filename);
         if (!file.is_open()) {
             return false;
         }
         
         // Read 9 rows and 9 columns from the file
-        for (int i = 0; i < 9; ++i) {
+        for (int i = 0; i < 9; ++i) { // ** ++i works the same as i++
             for (int j = 0; j < 9; ++j) {
                 file >> grid[i][j];
             }
@@ -78,7 +82,7 @@ public:
     /**
      * @brief Prints the current state of the puzzle grid to standard output.
      */
-    void print() const {
+    void print() const { // *** const keyword after function declaration makes it so that class function cannot change the input (StackOverflow)
         for (int i = 0; i < 9; ++i) {
             for (int j = 0; j < 9; ++j) {
                 std::cout << grid[i][j] << " ";
@@ -101,11 +105,15 @@ public:
     bool isValid(int row, int col, char val) const {
         // 1. Check the row and column constraints
         for (int i = 0; i < 9; ++i) {
+            // *** checks every num in row to see if value already exists
             if (grid[row][i] == val) return false; // Found in row
+            // *** checks every num in col to see if value already exists
             if (grid[i][col] == val) return false; // Found in column
         }
 
         // 2. Check the 3x3 subgrid constraint
+        // *** startRow and startCol calculation: 
+        // *** this snaps the start of the loop to the constraints of the corresponding subgrid
         int startRow = row - (row % 3);
         int startCol = col - (col % 3);
         for (int i = 0; i < 3; ++i) {
@@ -198,7 +206,7 @@ public:
 
         // Containers to store solutions and solution counts
         int solutionCount = 0;
-        std::vector<std::vector<std::vector<char>>> solutions; // vector that holds 2d vectors
+        std::vector<std::vector<std::vector<char>>> solutions; //*** vector that holds each solved sudoku grid
 
         // Execute backtracking solver
         puzzle.solveAll(solutionCount, solutions);
@@ -210,6 +218,8 @@ public:
         if (solutionCount == 0) {
             std::cout << "no solution found\n\n";
         } else {
+            // *** if solutions exist, print each solution using the size of the solutions vector as limit
+            // *** s indicates which solution is being printed
             for (size_t s = 0; s < solutions.size(); ++s) {
                 std::cout << "Solution " << (s + 1) << ":\n";
                 for (int i = 0; i < 9; ++i) {
