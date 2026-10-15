@@ -16,7 +16,7 @@ Other sources: Gemini
 Author: Ana Gonzalez Yuil
 Creation Date: 10.14.26
 Revision Date: 10.14.26
-Revisions: personal comments (indicated by ***)
+Revisions: personal comments (indicated by ***), check for enough filled cells (at least 17)
 */
 
 /**
@@ -64,6 +64,8 @@ public:
      * @return false If the file could not be opened.
      */
     bool loadFromFile(const std::string& filename) {// *** takes input variable by reference (does not create a copy)
+        int filledCells = 0; // *** holds amount of filled cells in unsolved sudoku grid
+        
         std::ifstream file(filename);
         if (!file.is_open()) {
             return false;
@@ -73,9 +75,15 @@ public:
         for (int i = 0; i < 9; ++i) { // ** ++i works the same as i++
             for (int j = 0; j < 9; ++j) {
                 file >> grid[i][j];
+
+                // *** implement check for at least 17 filled squares
+                if (grid[i][j] != '_') {filledCells++;} // *** if the cell is not empty, add to filledCells count.
             }
         }
         file.close();
+
+        if (filledCells < 17) {return false;} //if filledcells is less than 17, return false. (this prevents empty input)
+
         return true;
     }
 
@@ -195,7 +203,7 @@ public:
         
         // Attempt to load the puzzle from the file
         if (!puzzle.loadFromFile(filename)) {
-            std::cout << "Error: Could not open file " << filename << "\n\n";
+            std::cout << "Error: Could not open file " << filename << " or not enough squares filled.\n\n";
             return;
         }
 
